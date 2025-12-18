@@ -94,6 +94,9 @@ export const useAuthStore = create((set,get)=>({
         socket.on('connect', () => {
             console.log('✅ Socket connected:', socket.id);
             set({socket:socket});
+            import('./usechatstore').then(({useChatStore}) => {
+                useChatStore.getState().subscribetoAllMessages();
+            });
         });
         socket.on('get-online-users',(userIds)=>{
             set({onlineUser:userIds});

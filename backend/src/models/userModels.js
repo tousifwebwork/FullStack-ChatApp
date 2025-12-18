@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default:''
     },
+    lastMessageTime:{
+        type: Date,
+        default: new Date(0)
+    }
  }
   , { timestamps:true } 
     

@@ -15,6 +15,7 @@ const Sidebar = () => {
 
   
   const filterdUsers = showOnlineOnly ? users.filter(user => onlineUser.includes(user._id)) : users;
+  const sortedUsers = [...filterdUsers].sort((a, b) => (b.lastMessageTime || 0) - (a.lastMessageTime || 0));
 
 
   if(isusersloading){
@@ -55,7 +56,7 @@ const Sidebar = () => {
         {/* Bar */}
         <div className='overflow-y-auto w-full py-3 '>
          
-  {filterdUsers.map((user) => (
+  {sortedUsers.map((user) => (
   <button
     key={user._id}
     onClick={() => setselecteduser(user)}

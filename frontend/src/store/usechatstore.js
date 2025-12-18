@@ -9,6 +9,7 @@ export const useChatStore = create((set,get)=>({
     selecteduser : null,
     isusersloading : false, 
     ismessagesloading: false,
+    latestmsgRecive:null,
 
     getuser: async()=>{
         set({isusersloading:true});
@@ -35,10 +36,12 @@ export const useChatStore = create((set,get)=>({
     },
 
     sendmessage: async(messagedata)=>{
-        const {selecteduser,message} = get();
+        const {selecteduser,message,users} = get();
         try{
             const res = await axiosInstance.post(`/messages/send/${selecteduser._id}`, messagedata);
             set({message: [...message, res.data]});
+            const updatedUsers = users.map(u => u._id === selecteduser._id ? {...u, lastMessageTime: Date.now()} : u);
+            set({users: updatedUsers});
         }catch(err){
             toast.error(err.response?.data?.msg || "Failed to send message.");
         }
@@ -60,14 +63,30 @@ export const useChatStore = create((set,get)=>({
         })
     },
 
+    subscribetoAllMessages:()=>{
+        const socket = useAuthStore.getState().socket;
+        if(!socket) return;
+        
+        socket.off('newMessage');
+        socket.on('newMessage',(newMessage)=>{
+          const users = get().users.map(u => u._id === newMessage.senderId ? {...u, lastMessageTime: Date.now()} : u);
+          set({users});
+        })
+    },
+
      unsubscribetoMessages:()=>{
         
         const socket = useAuthStore.getState().socket;
-        socket.off('newMessage')
+        socket.off('newMessage');
+        socket.off('incomingMessage');
     },
 
     setselecteduser: (selecteduser)=>{
         set({selecteduser});
+    },
+
+    latestmsgRecivehandler: (message)=>{
+        set({latestmsgRecive: [...latestmsgRecive,socket.senderId]});
     }
 
 }))
