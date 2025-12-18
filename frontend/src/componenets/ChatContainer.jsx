@@ -18,14 +18,9 @@ const ChatContainer = () => {
 
   useEffect(()=>{
    getmessages(selecteduser._id);
-   
-   // Subscribe after a brief delay to ensure socket is ready
-   const timer = setTimeout(() => {
-     subscribetoMessages();
-   }, 100);
+   subscribetoMessages();
    
    return ()=>{
-     clearTimeout(timer);
      unsubscribetoMessages();
    }
   },[selecteduser._id,getmessages,subscribetoMessages,unsubscribetoMessages]);
