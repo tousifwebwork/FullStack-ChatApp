@@ -9,7 +9,6 @@ export const useChatStore = create((set,get)=>({
     selecteduser : null,
     isusersloading : false, 
     ismessagesloading: false,
-    lastMessageTime: {}, // Track last message time per user
 
     getuser: async()=>{
         set({isusersloading:true});
@@ -40,19 +39,6 @@ export const useChatStore = create((set,get)=>({
         try{
             const res = await axiosInstance.post(`/messages/send/${selecteduser._id}`, messagedata);
             set({message: [...message, res.data]});
-            
-            // Move user to top by updating last message time
-            const lastMessageTime = {...get().lastMessageTime};
-            lastMessageTime[selecteduser._id] = new Date().getTime();
-            set({lastMessageTime});
-            
-            // Sort users - most recent chat first
-            const sortedUsers = [...get().users].sort((a, b) => {
-                const timeA = lastMessageTime[a._id] || 0;
-                const timeB = lastMessageTime[b._id] || 0;
-                return timeB - timeA;
-            });
-            set({users: sortedUsers});
         }catch(err){
             toast.error(err.response?.data?.msg || "Failed to send message.");
         }
@@ -63,32 +49,13 @@ export const useChatStore = create((set,get)=>({
         if(!selecteduser) return;
 
         const socket = useAuthStore.getState().socket;
-        if(!socket) {
-            console.error('❌ Socket not available');
-            return;
-        }
+        if(!socket) return;
 
-        socket.off('newMessage'); // Remove old listener first
+        socket.off('newMessage');
         
         socket.on('newMessage',(newMessage)=>{
-          console.log('📨 New message received:', newMessage);
-          // Add message if it's from the selected user (either incoming or outgoing)
-          if(newMessage.senderId === selecteduser._id || newMessage.receiverId === selecteduser._id){
+          if(newMessage.senderId === selecteduser._id){
             set({message: [...get().message, newMessage]});
-            
-            // Move user to top by updating last message time
-            const lastMessageTime = {...get().lastMessageTime};
-            const userId = newMessage.senderId === selecteduser._id ? newMessage.senderId : newMessage.receiverId;
-            lastMessageTime[userId] = new Date(newMessage.createdAt).getTime();
-            set({lastMessageTime});
-            
-            // Sort users - most recent chat first
-            const sortedUsers = [...get().users].sort((a, b) => {
-                const timeA = lastMessageTime[a._id] || 0;
-                const timeB = lastMessageTime[b._id] || 0;
-                return timeB - timeA;
-            });
-            set({users: sortedUsers});
           }
         })
     },
