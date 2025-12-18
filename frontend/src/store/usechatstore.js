@@ -63,11 +63,15 @@ export const useChatStore = create((set,get)=>({
         if(!selecteduser) return;
 
         const socket = useAuthStore.getState().socket;
-        if(!socket || !socket.connected) return;
+        if(!socket) {
+            console.error('❌ Socket not available');
+            return;
+        }
 
         socket.off('newMessage'); // Remove old listener first
         
         socket.on('newMessage',(newMessage)=>{
+          console.log('📨 New message received:', newMessage);
           // Add message if it's from the selected user (either incoming or outgoing)
           if(newMessage.senderId === selecteduser._id || newMessage.receiverId === selecteduser._id){
             set({message: [...get().message, newMessage]});
