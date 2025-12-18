@@ -19,7 +19,7 @@ exports.getMessage = async (req, res) => {
 
     const Messages = await Message.find({
       $or:[{senderId:myId,receiverId:userToChatId},{senderId:userToChatId,receiverId:myId}]
-    })
+    }).sort({createdAt: -1})
 
     res.status(200).json(Messages)
 

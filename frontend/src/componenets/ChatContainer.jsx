@@ -43,7 +43,7 @@ const ChatContainer = () => {
     <div className='flex-1 flex flex-col overflow-auto'>
       <ChatHeader />
       <div className='flex-1 overflow-y-auto p-4 space-y-4'>
-        {message.map((msg)=>(
+        {message.slice().reverse().map((msg)=>(
           <div
           key={msg._id}
           className={`chat ${msg.senderId === authUser._id ? 'chat-end' : 'chat-start'}`}
