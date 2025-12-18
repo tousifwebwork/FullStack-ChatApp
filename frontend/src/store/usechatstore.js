@@ -9,6 +9,7 @@ export const useChatStore = create((set,get)=>({
     selecteduser : null,
     isusersloading : false, 
     ismessagesloading: false,
+    lastMessageTime: {}, // Track last message time per user
 
     getuser: async()=>{
         set({isusersloading:true});
@@ -39,6 +40,19 @@ export const useChatStore = create((set,get)=>({
         try{
             const res = await axiosInstance.post(`/messages/send/${selecteduser._id}`, messagedata);
             set({message: [...message, res.data]});
+            
+            // Move user to top by updating last message time
+            const lastMessageTime = {...get().lastMessageTime};
+            lastMessageTime[selecteduser._id] = new Date().getTime();
+            set({lastMessageTime});
+            
+            // Sort users - most recent chat first
+            const sortedUsers = [...get().users].sort((a, b) => {
+                const timeA = lastMessageTime[a._id] || 0;
+                const timeB = lastMessageTime[b._id] || 0;
+                return timeB - timeA;
+            });
+            set({users: sortedUsers});
         }catch(err){
             toast.error(err.response?.data?.msg || "Failed to send message.");
         }
@@ -56,11 +70,23 @@ export const useChatStore = create((set,get)=>({
           const isMessgaeSentFromselectedUser = newMessage.senderId === selecteduser._id;
           if(!isMessgaeSentFromselectedUser){return;}
 
-
           if(newMessage.senderId !== selecteduser._id){
             return;
           }
           set({message: [...get().message, newMessage]});
+          
+          // Move user to top by updating last message time
+          const lastMessageTime = {...get().lastMessageTime};
+          lastMessageTime[newMessage.senderId] = new Date(newMessage.createdAt).getTime();
+          set({lastMessageTime});
+          
+          // Sort users - most recent chat first
+          const sortedUsers = [...get().users].sort((a, b) => {
+              const timeA = lastMessageTime[a._id] || 0;
+              const timeB = lastMessageTime[b._id] || 0;
+              return timeB - timeA;
+          });
+          set({users: sortedUsers});
         })
     },
 
