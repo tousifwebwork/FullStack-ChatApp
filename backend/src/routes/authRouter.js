@@ -1,17 +1,15 @@
 const express = require('express');
-const authController = require('../controller/authController.js');
-const PR = require('../middleware/authMiddleware.js')
-const CA = require('../controller/authController.js')
 const Router = express.Router();
-    
-Router.post('/signup',authController.signup)
-Router.post('/login',authController.login)
-Router.post('/logout',authController.logout)
+const authController = require('../controller/authController.js');
+const { protectRoute } = require('../middleware/authMiddleware.js');
 
-Router.put('/update-profile', PR.protectRoute , authController.updateProfile)
+// Public routes
+Router.post('/signup', authController.signup);
+Router.post('/login', authController.login);
+Router.post('/logout', authController.logout);
 
-
-Router.get('/check' ,PR.protectRoute , CA.checkAuth)
-
+// Protected routes
+Router.get('/check', protectRoute, authController.checkAuth);
+Router.put('/update-profile', protectRoute, authController.updateProfile);
 
 module.exports = Router;
