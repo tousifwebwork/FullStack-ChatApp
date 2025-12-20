@@ -23,7 +23,7 @@ const Sidebar = () => {
   }
   return (
     <>
-      <aside className='h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200 '> 
+      <aside className='h-full w-20 lg:w-82 border-r border-base-300 flex flex-col transition-all duration-200 '> 
        
         <div className='border-b border-base-200  w-full p-5'>
           
@@ -46,7 +46,7 @@ const Sidebar = () => {
               </label>
 
              <span className="text-xs text-zinc-500">
-              ({onlineUser.length - 1} online)
+              ({users.filter(user => onlineUser.includes(user._id)).length} online)
              </span>
           </div>
 

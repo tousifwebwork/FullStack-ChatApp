@@ -1,10 +1,13 @@
 import React , {useState} from 'react'
 import { useAuthStore } from '../store/useAuthStore';
-import { Camera, Mail, User } from 'lucide-react';
+import { useChatStore } from '../store/usechatstore'
+import { Camera, Mail, User, UserPlus } from 'lucide-react';
 const ProfilePage = () => {
 
   const { authUser,isUpdatingProfile,updateProfile } = useAuthStore();
+  const { joinCodeLogic } = useChatStore();
   const [selectedImage, setselectedImage] = useState(null)
+  const [code, setCode] = useState('')
   const handleImageUplode = (e)=>{
   const file = e.target.files[0];
 
@@ -58,10 +61,53 @@ const ProfilePage = () => {
     />
   </label>
             </div>
-
             <p className='text-sm text-zinc-600'>
               {isUpdatingProfile ? 'Updating profile picture...' : 'Click the camera icon to change your profile picture.'}
             </p>
+            
+          <div className="flex items-center gap-4">
+            <p className="flex items-center gap-2">
+              My Code: 
+              <span className="font-mono font-semibold bg-base-200 px-3 py-1.5 rounded-lg border">
+                {authUser.inviteCode}
+              </span>
+            </p>
+            <button 
+              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-content rounded-lg cursor-pointer hover:bg-primary/80 transition-colors"
+              onClick={() => document.getElementById('invite_modal').showModal()}
+            >
+              <UserPlus className="w-4 h-4" />
+              Invite
+            </button>
+          </div>
+
+          {/* Invite Modal */}
+          <dialog id="invite_modal" className="modal">
+            <div className="modal-box w-60">
+              <form method="dialog">
+                <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+              </form>
+              <h3 className="font-bold text-lg mb-4 ">Invite User</h3>
+              <div className="space-y-4">
+                <input 
+                  type="text" 
+                  placeholder="Enter Your Friend's Code" 
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="input border-2 w-full focus:outline-none focus:border-primary" 
+                />
+                <button className="btn btn-primary w-full" onClick={() => joinCodeLogic(code)}>Join</button>
+              </div>
+            </div>
+            <form method="dialog" className="modal-backdrop">
+              <button>close</button>
+            </form>
+          </dialog>
+
+
+
+
+
           </div>
 
         <div className="space-y-6">

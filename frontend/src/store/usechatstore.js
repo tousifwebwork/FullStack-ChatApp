@@ -85,8 +85,24 @@ export const useChatStore = create((set,get)=>({
         set({selecteduser});
     },
 
-    latestmsgRecivehandler: (message)=>{
-        set({latestmsgRecive: [...latestmsgRecive,socket.senderId]});
+
+    joinCodeLogic: async (code) => {
+        if (!code || code.trim() === '') {
+            toast.error('Please enter a valid invite code');
+            return;
+        }
+        
+        try {
+            const res = await axiosInstance.post('/messages/join', { inviteCode: code });
+            toast.success(res.data.msg || 'Successfully joined!');
+            
+            // Refresh users list to include new connection
+            get().getuser();
+        } catch (err) {
+            toast.error(err.response?.data?.msg || 'Failed to join with this code');
+        }
     }
+
+
 
 }))

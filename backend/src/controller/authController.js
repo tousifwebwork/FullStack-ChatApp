@@ -20,12 +20,15 @@ exports.signup = async (req, res) => {
    if(user){
     return res.status(400).json({ msg: "Email already exists." });
    }
+
+   const inviteCode = Math.floor(10000 + Math.random() * 90000).toString();
    const salt = await bcrypt.genSalt(10);
    const hasPasword = await bcrypt.hash(password, salt);
    const newUser = new User({
     fullname:fullname.trim(),
     email:email.trim().toLowerCase(),
-    password: hasPasword
+    password: hasPasword,
+    inviteCode
    })
 
    if(newUser){
@@ -36,7 +39,8 @@ exports.signup = async (req, res) => {
       _id:newUser._id,
       fullname:newUser.fullname,
       email:newUser.email,
-      profilePic:newUser.profilePic
+      profilePic:newUser.profilePic,
+      inviteCode:newUser.inviteCode
     }, {msg:'User registered successfully'});
     
    }else{
@@ -47,6 +51,7 @@ exports.signup = async (req, res) => {
     res.status(500).json({ msg: "Server error" });
   }
 };
+
 
 
 exports.login = async (req, res) => {
@@ -75,6 +80,7 @@ exports.login = async (req, res) => {
 };
 
 
+
 exports.logout = (req, res) => {
   try{
     res.cookie('jwt','',{maxAge:0});
@@ -86,6 +92,7 @@ exports.logout = (req, res) => {
 };
 
 
+
 exports.checkAuth = (req,res)=>{
   try{
     res.status(200).json(req.user);
@@ -94,7 +101,6 @@ exports.checkAuth = (req,res)=>{
     res.status(500).json({ msg: "Server error" });
   }
 }
-
 
 
 
@@ -123,4 +129,5 @@ try{
   res.status(500).json({ msg: "Error: " + err.message });  
 }
 }
+
 

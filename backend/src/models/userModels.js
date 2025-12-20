@@ -21,7 +21,15 @@ const userSchema = new mongoose.Schema({
     lastMessageTime:{
         type: Date,
         default: new Date(0)
-    }
+    },
+    inviteCode: { 
+        type: String,
+        unique: true 
+    },
+    connections: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }]
  }
   , { timestamps:true } 
     
