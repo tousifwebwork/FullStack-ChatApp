@@ -1,11 +1,13 @@
 import { useRef, useState } from 'react';
-import { Image, Send, X } from 'lucide-react';
+import { DoorClosed, Image, Languages, Send, X } from 'lucide-react';
 import { useChatStore } from '../store/usechatstore';
 import toast from 'react-hot-toast';
+import Translator from './Translator';
 
 const MessageInput = () => {
   const [text, setText] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
+  const [showTranslator, setShowTranslator] = useState(false);
   const fileInputRef = useRef(null);
   const { sendmessage } = useChatStore();
 
@@ -84,6 +86,23 @@ const MessageInput = () => {
             onChange={handleImageChange}
           />
         </label>
+
+
+
+
+        <label
+          className={`shrink-0 btn btn-circle btn-sm sm:btn-md cursor-pointer text-zinc-400`}
+          onClick={() => setShowTranslator(true)}
+        >
+          <Languages size={18} />
+        </label>
+
+        {/* Translator Modal */}
+        {showTranslator && <Translator onClose={() => setShowTranslator(false)} />}
+
+
+
+
 
         {/* Text input */}
         <input
