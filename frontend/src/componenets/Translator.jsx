@@ -49,6 +49,7 @@ const Translator = ({ onClose }) => {
           <option value="Hindi">Hindi</option>
           <option value="Chinese">Chinese</option>
           <option value="Japanese">Japanese</option>
+          <option value="Urdu">Urdu</option>
         </select>
 
         <motion.button

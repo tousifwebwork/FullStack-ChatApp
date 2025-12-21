@@ -5,6 +5,7 @@ const langCodes = {
   Hindi: 'hi',
   Chinese: 'zh-CN',
   Japanese: 'ja',
+  Urdu: 'ur',
 };
 
 /**
