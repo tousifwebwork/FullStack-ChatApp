@@ -1,31 +1,31 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { X } from 'lucide-react'
 import { motion } from "motion/react"
-import { translateText } from '../lib/translator'
+import { useTranslatorStore } from '../store/useTranslatorStore'
 
 
 const Translator = ({ onClose }) => {
-  const [inputText, setInputText] = useState('');
-  const [outputText, setOutputText] = useState('');
-  const [targetLang, setTargetLang] = useState('es');
-  const [isLoading, setIsLoading] = useState(false);
+  const {
+    inputText,
+    outputText,
+    targetLanguage,
+    isLoading,
+    error,
+    setInputText,
+    setTargetLanguage,
+    translate,
+    reset,
+  } = useTranslatorStore();
 
-  const handleTranslate = async () => {
-    if (!inputText.trim()) return;
-    setIsLoading(true);
-    try {
-      const result = await translateText(inputText, targetLang);
-      setOutputText(result.translatedText || result.text || 'Translation failed');
-    } catch (err) {
-      setOutputText('Error translating');
-    }
-    setIsLoading(false);
+  const handleClose = () => {
+    reset();
+    onClose();
   };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-base-100 p-6 rounded-lg w-96 relative">
-        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={onClose}>
+        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onClick={handleClose}>
           <X size={16} />
         </button>
         <h3 className="font-bold text-lg mb-4">Translator</h3>
@@ -40,8 +40,8 @@ const Translator = ({ onClose }) => {
         
         <select 
           className="select select-bordered w-full mb-2"
-          value={targetLang}
-          onChange={(e) => setTargetLang(e.target.value)}
+          value={targetLanguage}
+          onChange={(e) => setTargetLanguage(e.target.value)}
         >
           <option value="Spanish">Spanish</option>
           <option value="French">French</option>
@@ -54,13 +54,19 @@ const Translator = ({ onClose }) => {
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }} 
-          onClick={handleTranslate}
-          disabled={isLoading}
+          onClick={translate}
+          disabled={isLoading || !inputText.trim()}
           className="p-3 w-full bg-blue-400 rounded-2xl text-xl mt-2 mb-2 cursor-pointer disabled:opacity-50">
           {isLoading ? 'Translating...' : 'TRANSLATE'}
         </motion.button>
 
-        {outputText && (
+        {error && (
+          <div className="bg-error/20 p-3 rounded-lg mt-2">
+            <p className="text-error text-sm">{error}</p>
+          </div>
+        )}
+
+        {outputText && !error && (
           <div className="bg-base-200 p-3 rounded-lg mt-2">
             <p className="text-sm text-zinc-400">Translation:</p>
             <p>{outputText}</p>

@@ -1,17 +1,32 @@
-import {create} from 'zustand';
-import {translateText} from '../lib/translator';
+import { create } from 'zustand';
+import { translateText } from '../lib/translator';
 
-exports.useTranslatorStore = create((set)=>{
-    inputText: ''
-    outputText: ''
-    targetLanguage: 'en'
-    isLoading: false
-    setinputText: (text) => set({inputText: text})
-    settargetLanguage: (lang) => set({targetLanguage: lang})
+export const useTranslatorStore = create((set, get) => ({
+  inputText: '',
+  outputText: '',
+  targetLanguage: 'Spanish',
+  isLoading: false,
+  error: null,
 
-    translate: async () => {
-        set({isLoading: true});
-        const result =  await translateText(get().inputText,get().targetLanguage);
-        set({outputText: result.translateText , isLoading: false});
+  setInputText: (text) => set({ inputText: text }),
+  setTargetLanguage: (lang) => set({ targetLanguage: lang }),
+  setOutputText: (text) => set({ outputText: text }),
+  clearError: () => set({ error: null }),
+
+  translate: async () => {
+    const { inputText, targetLanguage } = get();
+    if (!inputText.trim()) return;
+
+    set({ isLoading: true, error: null });
+
+    const result = await translateText(inputText, targetLanguage);
+
+    if (result.error) {
+      set({ outputText: '', error: result.error, isLoading: false });
+    } else {
+      set({ outputText: result.translatedText, error: null, isLoading: false });
     }
-})
+  },
+
+  reset: () => set({ inputText: '', outputText: '', error: null }),
+}))
