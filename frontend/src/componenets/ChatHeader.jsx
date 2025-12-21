@@ -1,6 +1,7 @@
 import { ArrowLeft, Phone, Video, X } from 'lucide-react';
 import { useChatStore } from '../store/usechatstore';
 import { useAuthStore } from '../store/useAuthStore';
+import ScheduledMessages from './ScheduledMessages';
 
 const ChatHeader = () => {
   const { selecteduser, setselecteduser } = useChatStore();
@@ -51,6 +52,10 @@ const ChatHeader = () => {
 
         {/* Right: Action buttons */}
         <div className="flex items-center gap-1 sm:gap-2">
+          
+          {/* Schedule  */}
+           <ScheduledMessages />
+
           <button className="p-2 hover:bg-base-200 rounded-full transition-colors">
             <Phone className="size-5" />
           </button>

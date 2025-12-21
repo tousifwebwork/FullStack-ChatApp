@@ -1,13 +1,16 @@
 import { useRef, useState } from 'react';
-import { DoorClosed, Image, Languages, Send, X } from 'lucide-react';
+import { ClipboardClock, DoorClosed, Image, Languages, Send, X } from 'lucide-react';
 import { useChatStore } from '../store/usechatstore';
 import toast from 'react-hot-toast';
 import Translator from './Translator';
+import Schedule from './Schedule';
+import ScheduledMessages from './ScheduledMessages';
 
 const MessageInput = () => {
   const [text, setText] = useState('');
   const [imagePreview, setImagePreview] = useState(null);
   const [showTranslator, setShowTranslator] = useState(false);
+  const [showScheduler, setShowScheduler] = useState(false)
   const fileInputRef = useRef(null);
   const { sendmessage } = useChatStore();
 
@@ -71,6 +74,7 @@ const MessageInput = () => {
 
       {/* Input Form */}
       <form onSubmit={handleSendMessage} className="flex items-center gap-2 w-full">
+       
         {/* Image upload button */}
         <label
           className={`shrink-0 btn btn-circle btn-sm sm:btn-md cursor-pointer ${
@@ -89,18 +93,27 @@ const MessageInput = () => {
 
 
 
-
+        {/* Translator button */}
         <label
           className={`shrink-0 btn btn-circle btn-sm sm:btn-md cursor-pointer text-zinc-400`}
-          onClick={() => setShowTranslator(true)}
-        >
+          onClick={() => setShowTranslator(true)} >
           <Languages size={18} />
         </label>
-
-        {/* Translator Modal */}
+       {/* Translator Modal */}
         {showTranslator && <Translator onClose={() => setShowTranslator(false)} />}
 
 
+
+        
+        {/* Sceduler button */}
+        <label
+          className={`shrink-0 btn btn-circle btn-sm sm:btn-md cursor-pointer text-zinc-400`}
+          onClick={() =>setShowScheduler(true) } >
+          <ClipboardClock size={18} />
+        </label>
+       {/* Scheduler Modal */}
+        {showScheduler && <Schedule onClose={() => setShowScheduler(false)} />}
+        
 
 
 

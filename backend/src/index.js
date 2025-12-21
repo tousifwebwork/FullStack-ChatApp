@@ -10,6 +10,7 @@ dotenv.config();
 // Import routes and utilities
 const authRoutes = require('./routes/authRouter.js');
 const messageRoutes = require('./routes/messageRouter.js');
+const scheduleRoutes = require('./routes/scheduleRouter.js');
 const DB = require('./lib/db.js');
 const { app, server } = require('./lib/socket.js');
 
@@ -37,6 +38,7 @@ DB.connectDB();
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api/schedule', scheduleRoutes);
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
