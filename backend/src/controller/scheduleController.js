@@ -1,13 +1,23 @@
 const ScheduledMessage = require('../models/ScheduledMessage');
 
-exports.scheduleMessage = async (req,res) =>{
-    const {message, scheduledAt} = req.body;
-    try{
-        const data = await ScheduledMessage.create({message, scheduledAt}); 
-        res.json(data);
-    }catch(err){
-        res.status(500).json({error: 'Failed to schedule message'});
+exports.scheduleMessage = async (req, res) => {
+  const { message, scheduledAt, receiverId } = req.body;
+  try {
+    // senderId from authenticated user
+    const senderId = req.user && req.user._id;
+    if (!senderId || !receiverId) {
+      return res.status(400).json({ error: 'Missing sender or receiver' });
     }
+    const data = await ScheduledMessage.create({
+      message,
+      scheduledAt,
+      senderId,
+      receiverId
+    });
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to schedule message' });
+  }
 }
 
 exports.getScheduledMessages = async (req, res) => {

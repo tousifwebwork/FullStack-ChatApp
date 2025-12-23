@@ -39,15 +39,15 @@ const Schedule = ({ onClose }) => {
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Enter your text"
-            className="p-3 w-80 border rounded outline-none"
+            placeholder="Enter your text..."
+            className="border-2 w-full p-4 border-gray-600 rounded-lg"
           />
 
           <input
             type="datetime-local"
             value={time}
             onChange={(e) => setTime(e.target.value)}
-            className="p-3 w-80 border outline-none rounded mt-2"
+            className="border-2 w-full p-4 border-gray-600 rounded-lg"
           />
 
           <motion.button

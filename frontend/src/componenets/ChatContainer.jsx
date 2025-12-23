@@ -103,6 +103,7 @@ const ChatContainer = () => {
                 />
               )}
               {msg.text && <p className="wrap-break-word">{msg.text}</p>}
+           
             </div>
           </div>
         ))}

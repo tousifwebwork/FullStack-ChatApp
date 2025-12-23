@@ -3,10 +3,7 @@ const bcrypt = require('bcryptjs');
 const token = require('../lib/utils');
 const cloudinary = require('cloudinary').v2;
 
-/**
- * Register a new user
- * Creates account with hashed password and unique invite code
- */
+
 exports.signup = async (req, res) => {
   const { fullname, email, password } = req.body;
 
@@ -56,10 +53,7 @@ exports.signup = async (req, res) => {
   }
 };
 
-/**
- * Login user with email and password
- * Returns user data and sets JWT cookie
- */
+ 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -86,9 +80,7 @@ exports.login = async (req, res) => {
   }
 };
 
-/**
- * Logout user by clearing JWT cookie
- */
+ 
 exports.logout = (req, res) => {
   try {
     res.cookie('jwt', '', { maxAge: 0 });
@@ -98,10 +90,7 @@ exports.logout = (req, res) => {
   }
 };
 
-/**
- * Check if user is authenticated
- * Returns current user data
- */
+ 
 exports.checkAuth = (req, res) => {
   try {
     res.status(200).json(req.user);
@@ -110,10 +99,7 @@ exports.checkAuth = (req, res) => {
   }
 };
 
-/**
- * Update user profile picture
- * Uploads image to Cloudinary and updates user record
- */
+ 
 exports.updateProfile = async (req, res) => {
   try {
     cloudinary.config({

@@ -13,6 +13,8 @@ const messageRoutes = require('./routes/messageRouter.js');
 const scheduleRoutes = require('./routes/scheduleRouter.js');
 const DB = require('./lib/db.js');
 const { app, server } = require('./lib/socket.js');
+// Start scheduler
+require('./jobs/scheduler');
 
 // CORS configuration
 const allowedOrigins =

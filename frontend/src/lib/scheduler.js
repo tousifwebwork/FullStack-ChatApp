@@ -1,10 +1,11 @@
 import  {axiosInstance} from './axios';
 
-export const scheduleMessage = async (message, dateTime) => {
-    try {
+export const scheduleMessage = async (message, dateTime, receiverId) => {
+  try {
     const res = await axiosInstance.post('/schedule', {
       message,
-      scheduledAt: dateTime
+      scheduledAt: dateTime,
+      receiverId
     });
     return res.data;
   } catch (err) {

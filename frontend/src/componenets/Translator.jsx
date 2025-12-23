@@ -31,15 +31,15 @@ const Translator = ({ onClose }) => {
         <h3 className="font-bold text-lg mb-4">Translator</h3>
         
         <textarea 
-          className="textarea textarea-bordered w-full mb-2" 
-          placeholder="Enter text to translate"
+          className=" border-2 w-full p-4 border-gray-600 rounded-lg " 
+          placeholder="Enter text to translate..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          rows={3}
+          rows={3} 
         />
         
         <select 
-          className="select select-bordered w-full mb-2"
+          className=" border-2 w-full p-4 border-gray-600 rounded-lg mb-2"
           value={targetLanguage}
           onChange={(e) => setTargetLanguage(e.target.value)}
         >
