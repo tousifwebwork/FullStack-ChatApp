@@ -114,7 +114,7 @@ const ChatInsights = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {/* Overall Mood - Large Display */}
+                {/* Overall Mood - Large Display */} 
                 <div className="text-center p-6 bg-linear-to-br from-base-200 to-base-300 rounded-xl">
                   <div className="text-8xl mb-3">{emoji}</div>
                   <h4 className="text-2xl font-bold mb-2">{mood}</h4>
