@@ -22,7 +22,9 @@ exports.scheduleMessage = async (req, res) => {
 
 exports.getScheduledMessages = async (req, res) => {
   try {
-    const messages = await ScheduledMessage.find().sort({ scheduledAt: 1 });
+    // Only return messages for the authenticated user
+    const senderId = req.user._id;
+    const messages = await ScheduledMessage.find({ senderId: senderId }).sort({ scheduledAt: 1 });
     res.json(messages);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch scheduled messages' });
@@ -32,9 +34,11 @@ exports.getScheduledMessages = async (req, res) => {
 exports.deleteMessage = async (req, res) => {
   const { id } = req.params;
   try {
-    const message = await ScheduledMessage.findByIdAndDelete(id);
+    // Only allow users to delete their own messages
+    const senderId = req.user._id;
+    const message = await ScheduledMessage.findOneAndDelete({ _id: id, senderId: senderId });
     if (!message) {
-      return res.status(404).json({ error: 'Message not found' });
+      return res.status(404).json({ error: 'Message not found or not authorized' });
     }
     res.json({ message: 'Message deleted successfully' });
   } catch (err) {

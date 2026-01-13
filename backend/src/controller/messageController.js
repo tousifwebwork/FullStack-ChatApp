@@ -1,12 +1,11 @@
 const User = require('../models/userModels');
 const Message = require('../models/messageModel');
+const SentimentModel = require('../models/sentimentModel');
 const { getReciverScoketId, io } = require('../lib/socket');
+const  SentimentFunction  = require('../lib/sentiment') ;
 const cloudinary = require('cloudinary').v2;
 
-/**
- * Join a user by their invite code
- * Creates a two-way connection between users
- */
+
 exports.joinByInviteCode = async (req, res) => {
   try {
     const { inviteCode } = req.body;
@@ -63,9 +62,7 @@ exports.joinByInviteCode = async (req, res) => {
   }
 };
 
-/**
- * Get all connected users for the logged-in user
- */
+
 exports.getUser = async (req, res) => {
   try {
     const loggeduserId = req.user._id;
@@ -76,9 +73,7 @@ exports.getUser = async (req, res) => {
   }
 };
 
-/**
- * Get all messages between current user and specified user
- */
+
 exports.getMessage = async (req, res) => {
   try {
     const { id: userToChatId } = req.params;
@@ -97,11 +92,7 @@ exports.getMessage = async (req, res) => {
   }
 };
 
-/**
- * Send a message to a user (text and/or image)
- * Uploads image to Cloudinary if provided
- * Emits real-time event to receiver via Socket.IO
- */
+
 exports.sendMessage = async (req, res) => {
   try {
     cloudinary.config({
@@ -138,6 +129,28 @@ exports.sendMessage = async (req, res) => {
 
     await newMessage.save();
 
+    // Store sentiment analysis if there's text
+    if (text && text.trim()) {
+      try {
+        const SentimentFunction = require('../lib/sentiment');
+        const SentimentModel = require('../models/sentimentModel');
+        const Score = SentimentFunction(text);
+        
+        // Generate consistent chatId using sorted user IDs
+        const chatId = [senderId.toString(), receiverId.toString()].sort().join('_');
+        
+        await SentimentModel.create({
+          chatId: chatId,
+          senderId: senderId,
+          text: text,
+          sentiment: Score
+        });
+        console.log('Sentiment stored for message:', { chatId: chatId, sentiment: Score });
+      } catch (sentimentError) {
+        console.error('Failed to store sentiment:', sentimentError);
+      }
+    }
+
     // Real-time: emit to receiver's socket
     const reciverSocketId = getReciverScoketId(receiverId);
     if (reciverSocketId) {
@@ -149,3 +162,4 @@ exports.sendMessage = async (req, res) => {
     res.status(500).json({ msg: err.message });
   }
 };
+

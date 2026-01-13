@@ -11,6 +11,8 @@ dotenv.config();
 const authRoutes = require('./routes/authRouter.js');
 const messageRoutes = require('./routes/messageRouter.js');
 const scheduleRoutes = require('./routes/scheduleRouter.js');
+const InsighRouter = require('./routes/insights.js');
+
 const DB = require('./lib/db.js');
 const { app, server } = require('./lib/socket.js');
 // Start scheduler
@@ -41,6 +43,7 @@ DB.connectDB();
 app.use('/api/auth', authRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/schedule', scheduleRoutes);
+app.use('/api/insights', InsighRouter);
 
 // Serve frontend in production
 if (process.env.NODE_ENV === 'production') {
@@ -51,7 +54,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Start server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });

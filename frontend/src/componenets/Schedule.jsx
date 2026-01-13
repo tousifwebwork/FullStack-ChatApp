@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { X } from 'lucide-react';
 import { useShedulerStore } from '../store/useScheduleStore';
-import { toast } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 const Schedule = ({ onClose }) => {
   const [message, setMessage] = useState('');

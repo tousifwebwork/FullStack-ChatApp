@@ -6,7 +6,7 @@ const { protectRoute } = require('../middleware/authMiddleware');
 const { scheduleMessage, getScheduledMessages, deleteMessage } = require('../controller/scheduleController');
 
 Router.post('/', protectRoute, scheduleMessage);
-Router.get('/', getScheduledMessages);
-Router.delete('/:id', deleteMessage);
+Router.get('/', protectRoute, getScheduledMessages);
+Router.delete('/:id', protectRoute, deleteMessage);
 
 module.exports = Router;

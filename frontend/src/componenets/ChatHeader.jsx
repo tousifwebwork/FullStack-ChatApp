@@ -2,6 +2,7 @@
   import { useChatStore } from '../store/usechatstore';
   import { useAuthStore } from '../store/useAuthStore';
   import ScheduledMessages from './ScheduledMessages';
+  import ChatInsights from './ChatInsights';
 
   const ChatHeader = () => {
     const { selecteduser, setselecteduser } = useChatStore();
@@ -11,7 +12,7 @@
     return (
       <div className="px-3 py-2 sm:p-2.5 border-b border-base-300 bg-base-100">
         <div className="flex items-center justify-between">
-          
+
           {/* Left: Back button + User info */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Back button (mobile only) */}
@@ -53,6 +54,9 @@
           {/* Right: Action buttons */}
           <div className="flex items-center gap-1 sm:gap-2">
             
+            {/* ChatInsights */}
+            <ChatInsights />
+
             {/* Schedule  */}
             <ScheduledMessages />
 
