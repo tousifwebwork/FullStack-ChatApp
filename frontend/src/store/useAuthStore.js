@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { io } from 'socket.io-client';
 import toast from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
-import config from '../lib/config';
+import { API_URL } from '../config';
 
 export const useAuthStore = create((set, get) => ({
   // State
@@ -88,7 +88,7 @@ export const useAuthStore = create((set, get) => ({
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
 
-    const socket = io(config.SOCKET_URL, {
+    const socket = io(API_URL, {
       query: { userId: authUser._id },
       reconnection: true,
       reconnectionDelay: 1000,
