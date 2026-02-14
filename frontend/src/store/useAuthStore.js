@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
 
 // Socket URL based on environment
-const BASE_URL = import.meta.env.MODE === 'development' ? 'http://localhost:4000' : '/';
+const BASE_URL = import.meta.env.MODE === 'development' ? 'http://localhost:4000' : 'https://chat-backend-ty35.onrender.com';
 
 export const useAuthStore = create((set, get) => ({
   // State
