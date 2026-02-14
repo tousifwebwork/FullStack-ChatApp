@@ -2,9 +2,7 @@ import { create } from 'zustand';
 import { io } from 'socket.io-client';
 import toast from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
-
-// Socket URL based on environment
-const BASE_URL = import.meta.env.MODE === 'development' ? 'http://localhost:4000' : 'https://chat-backend-ty35.onrender.com';
+import config from '../lib/config';
 
 export const useAuthStore = create((set, get) => ({
   // State
@@ -90,7 +88,7 @@ export const useAuthStore = create((set, get) => ({
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
 
-    const socket = io(BASE_URL, {
+    const socket = io(config.SOCKET_URL, {
       query: { userId: authUser._id },
       reconnection: true,
       reconnectionDelay: 1000,

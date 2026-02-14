@@ -1,8 +1,9 @@
 import axios from 'axios';
+import config from './config';
 
 // Configure axios with base URL and credentials
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.MODE === 'development' ? 'http://localhost:4000/api' : 'https://chat-backend-ty35.onrender.com/api',
+  baseURL: config.API_URL,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
