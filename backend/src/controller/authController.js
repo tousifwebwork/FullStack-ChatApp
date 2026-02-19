@@ -83,7 +83,12 @@ exports.login = async (req, res) => {
  
 exports.logout = (req, res) => {
   try {
-    res.cookie('jwt', '', { maxAge: 0 });
+    res.cookie('jwt', '', {
+      maxAge: 0,
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
     return res.status(200).json({ msg: 'Logged out successfully.' });
   } catch (err) {
     return res.status(500).json({ msg: 'Server error' });

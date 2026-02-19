@@ -18,25 +18,36 @@ const { app, server } = require('./lib/socket.js');
 // Start scheduler
 require('./jobs/scheduler');
 
+// Allowed origins for CORS
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://fullstack-chatapp-production-178a.up.railway.app',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 // CORS configuration
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow requests with no origin (Postman, curl)
+      // Allow requests with no origin (Postman, curl, same-origin)
       if (!origin) return callback(null, true);
-
-      if (
-        origin === process.env.FRONTEND_URL ||
-        origin === 'http://localhost:5173'
-      ) {
+      
+      // Check if origin is in allowed list
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        // Don't throw error - just deny with false
+        callback(null, false);
       }
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
+
+// Handle preflight requests explicitly
+app.options('*', cors());
 
 // Middleware
 app.use(express.json({ limit: '50mb' }));
