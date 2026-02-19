@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Loader } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
@@ -6,16 +6,23 @@ import { Toaster } from 'react-hot-toast';
 // Components
 import NavBar from './componenets/NavBar';
 
-// Pages
-import Home from './pages/Home';
-import SignupPage from './pages/SignupPage';
-import LoginPage from './pages/LoginPage';
-import SettingsPage from './pages/SettingsPage';
-import ProfilePage from './pages/ProfilePage';
+// Lazy load pages for better code splitting
+const Home = lazy(() => import('./pages/Home'));
+const SignupPage = lazy(() => import('./pages/SignupPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
+const SettingsPage = lazy(() => import('./pages/SettingsPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 
 // Stores
 import { useAuthStore } from './store/useAuthStore';
 import { useThemeStore } from './store/useThemeStore';
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="flex justify-center items-center h-screen">
+    <Loader className="size-10 animate-spin" />
+  </div>
+);
 
 const App = () => {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -43,13 +50,15 @@ const App = () => {
   return (
     <div>
       <NavBar />
-      <Routes>
-        <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
-        <Route path="/signup" element={!authUser ? <SignupPage /> : <Navigate to="/" />} />
-        <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
-      </Routes>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/" element={authUser ? <Home /> : <Navigate to="/login" />} />
+          <Route path="/signup" element={!authUser ? <SignupPage /> : <Navigate to="/" />} />
+          <Route path="/login" element={!authUser ? <LoginPage /> : <Navigate to="/" />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+        </Routes>
+      </Suspense>
       <Toaster />
     </div>
   );

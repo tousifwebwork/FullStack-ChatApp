@@ -1,5 +1,5 @@
 // src/config.js
-// Use localhost for development, Render URL for production
+// Use environment variables for API URL configuration
 export const API_URL = import.meta.env.MODE === 'development' 
-  ? 'http://localhost:4000' 
-  : 'https://chat-backend-ty35.onrender.com';
+  ? import.meta.env.VITE_API_URL_DEV 
+  : import.meta.env.VITE_API_URL_PROD;
