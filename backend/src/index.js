@@ -19,14 +19,21 @@ const { app, server } = require('./lib/socket.js');
 require('./jobs/scheduler');
 
 // CORS configuration
-const allowedOrigins =
-  process.env.NODE_ENV === 'production'
-    ? [process.env.FRONTEND_URL]
-    : ['http://localhost:5173'];
-
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // allow requests with no origin (Postman, curl)
+      if (!origin) return callback(null, true);
+
+      if (
+        origin === process.env.FRONTEND_URL ||
+        origin === 'http://localhost:5173'
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
