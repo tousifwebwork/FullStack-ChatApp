@@ -29,25 +29,20 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (Postman, curl, same-origin)
       if (!origin) return callback(null, true);
-      
-      // Check if origin is in allowed list
+
       if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        // Don't throw error - just deny with false
-        callback(null, false);
+        return callback(null, true);
       }
+
+      return callback(null, false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
-
-// Handle preflight requests explicitly
-app.options('*', cors());
+ 
 
 // Middleware
 app.use(express.json({ limit: '50mb' }));
