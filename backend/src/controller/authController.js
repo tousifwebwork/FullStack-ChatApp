@@ -8,7 +8,6 @@ exports.signup = async (req, res) => {
   const { fullname, email, password } = req.body;
 
   try {
-    // Validate required fields
     if (!fullname || !email) {
       return res.status(400).json({ msg: 'Please enter all fields.' });
     }
@@ -16,13 +15,11 @@ exports.signup = async (req, res) => {
       return res.status(400).json({ msg: 'Password must be at least 6 characters long.' });
     }
 
-    // Check if user already exists
     const user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ msg: 'Email already exists.' });
     }
 
-    // Generate unique invite code and hash password
     const inviteCode = Math.floor(10000 + Math.random() * 90000).toString();
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);

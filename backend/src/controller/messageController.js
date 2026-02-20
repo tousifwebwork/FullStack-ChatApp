@@ -15,24 +15,20 @@ exports.joinByInviteCode = async (req, res) => {
       return res.status(400).json({ msg: 'Invite code is required' });
     }
 
-    // Find user with this invite code
     const userToJoin = await User.findOne({ inviteCode: inviteCode.trim() });
     if (!userToJoin) {
       return res.status(404).json({ msg: 'Invalid invite code' });
     }
 
-    // Check if trying to join self
     if (userToJoin._id.toString() === currentUserId.toString()) {
       return res.status(400).json({ msg: 'You cannot join yourself' });
     }
 
-    // Check if already connected
     const currentUser = await User.findById(currentUserId);
     if (currentUser.connections.includes(userToJoin._id)) {
       return res.status(400).json({ msg: 'Already connected with this user' });
     }
 
-    // Add each user to the other's connections (two-way)
     await User.findByIdAndUpdate(currentUserId, {
       $addToSet: { connections: userToJoin._id },
     });
@@ -40,7 +36,6 @@ exports.joinByInviteCode = async (req, res) => {
       $addToSet: { connections: currentUserId },
     });
 
-    // Notify the other user via socket
     const receiverSocketId = getReciverScoketId(userToJoin._id.toString());
     if (receiverSocketId) {
       io.to(receiverSocketId).emit('userJoined', {
@@ -111,7 +106,6 @@ exports.sendMessage = async (req, res) => {
 
     let imageUrl = null;
 
-    // Upload image to Cloudinary if provided
     if (image) {
       const uploadResponse = await cloudinary.uploader.upload(image, {
         folder: 'chatapp/messages',
@@ -129,14 +123,12 @@ exports.sendMessage = async (req, res) => {
 
     await newMessage.save();
 
-    // Store sentiment analysis if there's text
     if (text && text.trim()) {
       try {
         const SentimentFunction = require('../lib/sentiment');
         const SentimentModel = require('../models/sentimentModel');
         const Score = SentimentFunction(text);
         
-        // Generate consistent chatId using sorted user IDs
         const chatId = [senderId.toString(), receiverId.toString()].sort().join('_');
         
         await SentimentModel.create({
@@ -151,7 +143,6 @@ exports.sendMessage = async (req, res) => {
       }
     }
 
-    // Real-time: emit to receiver's socket
     const reciverSocketId = getReciverScoketId(receiverId);
     if (reciverSocketId) {
       io.to(reciverSocketId).emit('newMessage', newMessage);

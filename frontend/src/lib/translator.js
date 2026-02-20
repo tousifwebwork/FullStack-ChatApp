@@ -8,12 +8,6 @@ const langCodes = {
   Urdu: 'ur',
 };
 
-/**
- * Translates text using MyMemory API
- * @param {string} text - Text to translate
- * @param {string} targetLanguage - Target language name (e.g., 'Spanish')
- * @returns {Promise<{ translatedText: string, error: string | null }>}
- */
 export const translateText = async (text, targetLanguage) => {
   const targetCode = langCodes[targetLanguage] || 'es';
   const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetCode}`;

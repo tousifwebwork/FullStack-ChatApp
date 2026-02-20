@@ -8,7 +8,6 @@ const {
   joinByInviteCode,
 } = require('../controller/messageController');
 
-// All routes are protected (require authentication)
 Router.get('/users', protectRoute, getUser);
 Router.get('/:id', protectRoute, getMessage);
 Router.post('/send/:id', protectRoute, sendMessage);

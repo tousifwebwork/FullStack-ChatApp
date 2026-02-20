@@ -7,7 +7,6 @@ export const useShedulerStore = create((set, get) => ({
 
     schedule: async (message, dateTime) => {
         set({ isLoading: true });
-        // Get receiverId from selecteduser in chat store
         const selecteduser = useChatStore.getState().selecteduser;
         const receiverId = selecteduser?._id;
         const res = await scheduleMessage(message, dateTime, receiverId);

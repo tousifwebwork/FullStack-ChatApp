@@ -5,7 +5,6 @@ import { axiosInstance } from '../lib/axios';
 import { API_URL } from '../config';
 
 export const useAuthStore = create((set, get) => ({
-  // State
   authUser: null,
   isSigningIn: false,
   isLoggingIn: false,
@@ -14,7 +13,6 @@ export const useAuthStore = create((set, get) => ({
   onlineUser: [],
   socket: null,
 
-  // Check if user is already authenticated (on app load)
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get('/auth/check');
@@ -27,7 +25,6 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Register new user
   signup: async (data) => {
     set({ isSigningIn: true });
     try {
@@ -42,7 +39,6 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Login existing user
   login: async (data) => {
     set({ isLoggingIn: true });
     try {
@@ -57,7 +53,6 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Logout user
   logout: async () => {
     try {
       await axiosInstance.post('/auth/logout');
@@ -69,7 +64,6 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Update user profile picture
   updateProfile: async (data) => {
     set({ isUpdatingProfile: true });
     try {
@@ -83,13 +77,13 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Connect to WebSocket server
   connectSocket: () => {
     const { authUser } = get();
     if (!authUser || get().socket?.connected) return;
 
     const socket = io(API_URL, {
       query: { userId: authUser._id },
+      withCredentials: true,
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
@@ -98,7 +92,6 @@ export const useAuthStore = create((set, get) => ({
 
     socket.on('connect', () => {
       set({ socket });
-      // Subscribe to all messages for notification purposes
       import('./usechatstore').then(({ useChatStore }) => {
         useChatStore.getState().subscribetoAllMessages();
       });
@@ -109,7 +102,6 @@ export const useAuthStore = create((set, get) => ({
     });
   },
 
-  // Disconnect from WebSocket server
   disconnectSocket: () => {
     if (get().socket?.connected) {
       get().socket.disconnect();

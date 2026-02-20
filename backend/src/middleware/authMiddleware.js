@@ -1,10 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModels');
 
-/**
- * Middleware to protect routes - verifies JWT token
- * Attaches user object to request if valid
- */
 exports.protectRoute = async (req, res, next) => {
   try {
     const token = req.cookies.jwt;

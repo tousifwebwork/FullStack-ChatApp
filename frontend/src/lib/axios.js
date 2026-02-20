@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { API_URL } from '../config';
 
-// Configure axios with base URL and credentials
 export const axiosInstance = axios.create({
   baseURL: `${API_URL}/api`,
   withCredentials: true,

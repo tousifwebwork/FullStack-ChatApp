@@ -1,18 +1,12 @@
 const jwt = require('jsonwebtoken');
 
-/**
- * Generate JWT token and set it as HTTP-only cookie
- * @param {string} userId - User's MongoDB ID
- * @param {object} res - Express response object
- * @returns {string} - Generated JWT token
- */
 exports.generateToken = (userId, res) => {
   const token = jwt.sign({ userID: userId }, process.env.JWT_SECRET, {
     expiresIn: '7d',
   });
 
   res.cookie('jwt', token, {
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    maxAge: 7 * 24 * 60 * 60 * 1000,
     httpOnly: true,
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     secure: process.env.NODE_ENV === 'production',
