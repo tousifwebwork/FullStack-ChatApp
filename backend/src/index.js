@@ -3,20 +3,26 @@ const dotenv = require('dotenv');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
+const http = require('http');
 
 dotenv.config();
 
-// Routes
+// ---------------- App + Server ----------------
+const app = express();
+const server = http.createServer(app);
+
+// ---------------- Socket ----------------
+const { initSocket } = require('./lib/socket.js');
+initSocket(server); // ✅ VERY IMPORTANT
+
+// ---------------- Routes ----------------
 const authRoutes = require('./routes/authRouter.js');
 const messageRoutes = require('./routes/messageRouter.js');
 const scheduleRoutes = require('./routes/scheduleRouter.js');
 const InsighRouter = require('./routes/insights.js');
 
-// DB + Socket (IMPORTANT: same app & server)
+// ---------------- DB ----------------
 const DB = require('./lib/db.js');
-const { app, server } = require('./lib/socket.js');
-
-// Start background jobs
 require('./jobs/scheduler');
 
 // ---------------- CORS ----------------
@@ -29,26 +35,20 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // Postman / server calls
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error('Not allowed by CORS'));
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(null, false);
     },
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
 
 // ---------------- Middlewares ----------------
 app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ---------------- DB ----------------
+// ---------------- DB Connect ----------------
 DB.connectDB();
 
 // ---------------- API Routes ----------------
@@ -57,18 +57,15 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/schedule', scheduleRoutes);
 app.use('/api/insights', InsighRouter);
 
-// ---------------- Frontend (Production) ----------------
+// ---------------- Frontend ----------------
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../../frontend/dist')));
-
   app.get('*', (req, res) => {
-    res.sendFile(
-      path.resolve(__dirname, '../../frontend/dist/index.html')
-    );
+    res.sendFile(path.resolve(__dirname, '../../frontend/dist/index.html'));
   });
 }
 
-// ---------------- Server Start ----------------
+// ---------------- Start Server ----------------
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
