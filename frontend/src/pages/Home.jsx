@@ -2,7 +2,7 @@ import React from 'react';
 import { useChatStore } from '../store/usechatstore';
 import ChatContainer from '../components/ChatContainer';
 import Sidebar from '../components/Sidebar';
-import NochatSelected from '../components/AuthImagePatern';
+import NochatSelected from '../components/NochatSelected';
 
 const Home = () => {
   const selecteduser = useChatStore((state) => state.selecteduser);

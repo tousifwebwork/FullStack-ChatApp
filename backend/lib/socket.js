@@ -5,7 +5,10 @@ let io;
 function initSocket(server) {
   io = new Server(server, {
     cors: {
-      origin: "https://fullstack-chatapp-production-178a.up.railway.app",
+      origin: [
+        "http://localhost:5173",
+        "https://fullstack-chatapp-production-178a.up.railway.app"
+      ],
       methods: ["GET", "POST"],
       credentials: true,
     },
