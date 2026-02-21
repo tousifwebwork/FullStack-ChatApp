@@ -71,7 +71,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 console.log("ENV KEYS:", Object.keys(process.env));
-console.log("MONGO_URI =", process.env.MONGO_URI);
+console.log("MONGO_URI =", process.env.MONGODB_URI);
 
 // ---------------- Start Server ----------------
 const PORT = process.env.PORT || 4000;
