@@ -21,8 +21,14 @@ app.use(
   })
 );
 
-// Preflight support (IMPORTANT for Express 5)
-app.options("*", cors());
+app.use(
+  cors({
+    origin: "https://fullstack-chatapp-production-178a.up.railway.app",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // ---------------- Body & Cookies ----------------
 app.use(express.json());
@@ -63,6 +69,9 @@ if (process.env.NODE_ENV === "production") {
     );
   });
 }
+
+console.log("ENV KEYS:", Object.keys(process.env));
+console.log("MONGO_URI =", process.env.MONGO_URI);
 
 // ---------------- Start Server ----------------
 const PORT = process.env.PORT || 4000;

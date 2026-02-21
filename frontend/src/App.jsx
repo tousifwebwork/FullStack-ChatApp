@@ -4,7 +4,7 @@ import { Loader } from 'lucide-react';
 import { Toaster } from 'react-hot-toast';
 
 // Components
-import NavBar from './componenets/NavBar';
+import NavBar from './components/NavBar';
 
 // Lazy load pages for better code splitting
 const Home = lazy(() => import('./pages/Home'));

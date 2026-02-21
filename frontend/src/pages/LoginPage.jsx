@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useAuthStore } from '../store/useAuthStore';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import AuthImagePatern from '../componenets/AuthImagePatern';
+import AuthImagePatern from '../components/AuthImagePatern';
 import toast from 'react-hot-toast';
 import { Loader2 } from 'lucide-react';
 
