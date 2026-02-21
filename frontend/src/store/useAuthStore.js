@@ -14,11 +14,17 @@ export const useAuthStore = create((set, get) => ({
   socket: null,
 
   checkAuth: async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      set({ authUser: null, isCheckingAuth: false });
+      return;
+    }
     try {
       const res = await axiosInstance.get('/auth/check');
       set({ authUser: res.data });
       get().connectSocket();
     } catch (err) {
+      localStorage.removeItem('token');
       set({ authUser: null });
     } finally {
       set({ isCheckingAuth: false });
@@ -29,7 +35,8 @@ export const useAuthStore = create((set, get) => ({
     set({ isSigningIn: true });
     try {
       const res = await axiosInstance.post('/auth/signup', data);
-      set({ authUser: res.data });
+      localStorage.setItem('token', res.data.token);
+      set({ authUser: res.data.user });
       toast.success('Signup successful!');
       get().connectSocket();
     } catch (err) {
@@ -43,7 +50,8 @@ export const useAuthStore = create((set, get) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post('/auth/login', data);
-      set({ authUser: res.data });
+      localStorage.setItem('token', res.data.token);
+      set({ authUser: res.data.user });
       toast.success('Login successful!');
       get().connectSocket();
     } catch (err) {
@@ -56,6 +64,7 @@ export const useAuthStore = create((set, get) => ({
   logout: async () => {
     try {
       await axiosInstance.post('/auth/logout');
+      localStorage.removeItem('token');
       set({ authUser: null });
       toast.success('Logged out successfully.');
       get().disconnectSocket();
@@ -79,11 +88,11 @@ export const useAuthStore = create((set, get) => ({
 
   connectSocket: () => {
     const { authUser } = get();
-    if (!authUser || get().socket?.connected) return;
+    const token = localStorage.getItem('token');
+    if (!authUser || !token || get().socket?.connected) return;
 
     const socket = io(API_URL, {
-      query: { userId: authUser._id },
-      withCredentials: true,
+      auth: { token },
       reconnection: true,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,

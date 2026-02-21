@@ -33,14 +33,17 @@ exports.signup = async (req, res) => {
 
     if (newUser) {
       await newUser.save();
-      token.generateToken(newUser._id, res);
+      const jwtToken = token.generateToken(newUser._id);
 
       res.status(201).json({
-        _id: newUser._id,
-        fullname: newUser.fullname,
-        email: newUser.email,
-        profilePic: newUser.profilePic,
-        inviteCode: newUser.inviteCode,
+        token: jwtToken,
+        user: {
+          _id: newUser._id,
+          fullname: newUser.fullname,
+          email: newUser.email,
+          profilePic: newUser.profilePic,
+          inviteCode: newUser.inviteCode,
+        },
       });
     } else {
       return res.status(400).json({ msg: 'Error in Saving data' });
@@ -65,12 +68,15 @@ exports.login = async (req, res) => {
       return res.status(400).json({ msg: 'Invalid password.' });
     }
 
-    token.generateToken(user._id, res);
+    const jwtToken = token.generateToken(user._id);
     res.status(200).json({
-      _id: user._id,
-      fullname: user.fullname,
-      email: user.email,
-      profilePic: user.profilePic,
+      token: jwtToken,
+      user: {
+        _id: user._id,
+        fullname: user.fullname,
+        email: user.email,
+        profilePic: user.profilePic,
+      },
     });
   } catch (err) {
     res.status(500).json({ msg: 'Server error' });
@@ -79,17 +85,8 @@ exports.login = async (req, res) => {
 
  
 exports.logout = (req, res) => {
-  try {
-    res.cookie('jwt', '', {
-      maxAge: 0,
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      secure: process.env.NODE_ENV === 'production',
-    });
-    return res.status(200).json({ msg: 'Logged out successfully.' });
-  } catch (err) {
-    return res.status(500).json({ msg: 'Server error' });
-  }
+  // With JWT in headers, logout is handled on the client by removing token
+  return res.status(200).json({ msg: 'Logged out successfully.' });
 };
 
  

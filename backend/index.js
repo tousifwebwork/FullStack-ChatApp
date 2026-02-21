@@ -1,7 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const path = require("path");
-const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const http = require("http");
 
@@ -14,17 +13,15 @@ const server = http.createServer(app);
  
 app.use(
   cors({
-    origin: [ "http://localhost:5173","https://fullstack-chatapp-production-178a.up.railway.app"],
-    credentials: true,
+    origin: ["http://localhost:5173", "https://fullstack-chatapp-production-178a.up.railway.app"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-// ---------------- Body & Cookies ----------------
+// ---------------- Body Parsing ----------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 
 // ---------------- Socket ----------------
 const { initSocket } = require("./lib/socket.js");
