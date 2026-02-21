@@ -11,19 +11,10 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// ---------------- CORS (MUST BE FIRST) ----------------
+ 
 app.use(
   cors({
-    origin: "https://fullstack-chatapp-production-178a.up.railway.app",
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
-app.use(
-  cors({
-    origin: "https://fullstack-chatapp-production-178a.up.railway.app",
+    origin: [ "http://localhost:5173","https://fullstack-chatapp-production-178a.up.railway.app"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
