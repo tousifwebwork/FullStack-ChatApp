@@ -12,6 +12,7 @@ export const useAuthStore = create((set, get) => ({
   isCheckingAuth: true,
   onlineUser: [],
   socket: null,
+  invitecode: null,
 
   checkAuth: async () => {
     const token = localStorage.getItem('token');
@@ -116,4 +117,14 @@ export const useAuthStore = create((set, get) => ({
       get().socket.disconnect();
     }
   },
+
+  joincodefunction: async () => {
+  try {
+    const res = await axiosInstance.get("/insights/invite-code");
+    set({ invitecode: res.data.inviteCode }); 
+  } catch (err) {
+    toast.error("Failed to load join code");
+  }
+  }
+  
 }));

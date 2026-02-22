@@ -1,13 +1,18 @@
-import React , {useState} from 'react'
+import {useState, useEffect} from 'react'
 import { useAuthStore } from '../store/useAuthStore';
 import { useChatStore } from '../store/usechatstore'
 import { Camera, Mail, User, UserPlus } from 'lucide-react';
 const ProfilePage = () => {
 
-  const { authUser,isUpdatingProfile,updateProfile } = useAuthStore();
+  const { authUser,isUpdatingProfile,updateProfile, invitecode, joincodefunction } = useAuthStore();
   const { joinCodeLogic } = useChatStore();
   const [selectedImage, setselectedImage] = useState(null)
   const [code, setCode] = useState('')
+
+  useEffect(() => {
+    joincodefunction();
+  }, [joincodefunction]);
+
   const handleImageUplode = (e)=>{
   const file = e.target.files[0];
 
@@ -69,7 +74,7 @@ const ProfilePage = () => {
             <p className="flex items-center gap-2">
               My Code: 
               <span className="font-mono font-semibold bg-base-200 px-3 py-1.5 rounded-lg border">
-                {authUser.inviteCode}
+                {invitecode || 'Loading...'}
               </span>
             </p>
             <button 
