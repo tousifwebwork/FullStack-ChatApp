@@ -13,7 +13,7 @@ const server = http.createServer(app);
  
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://fullstack-chatapp-production-178a.up.railway.app"],
+    origin: ["http://localhost:5173", "https://backend-chatapp-h1ea.onrender.com", process.env.FRONTEND_URL],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
