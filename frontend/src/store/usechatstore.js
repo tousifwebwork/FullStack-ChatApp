@@ -5,6 +5,7 @@ import { useAuthStore } from './useAuthStore';
 
 export const useChatStore = create((set, get) => ({
   message: [],
+  messages: [],
   users: [],
   selecteduser: null,
   isusersloading: false,
@@ -26,7 +27,7 @@ export const useChatStore = create((set, get) => ({
     set({ ismessagesloading: true });
     try {
       const res = await axiosInstance.get(`/messages/${userId}`);
-      set({ message: res.data });
+      set({ message: res.data, messages: res.data });
     } catch (err) {
       toast.error(err.response?.data?.msg || 'Failed to fetch messages.');
     } finally {
@@ -35,10 +36,11 @@ export const useChatStore = create((set, get) => ({
   },
 
   sendmessage: async (messageData) => {
-    const { selecteduser, message, users } = get();
+    const { selecteduser, message, messages, users } = get();
     try {
       const res = await axiosInstance.post(`/messages/send/${selecteduser._id}`, messageData);
-      set({ message: [...message, res.data] });
+      const updatedMessages = [...(messages.length ? messages : message), res.data];
+      set({ message: updatedMessages, messages: updatedMessages });
       
       const updatedUsers = users.map((u) =>
         u._id === selecteduser._id ? { ...u, lastMessageTime: Date.now() } : u
@@ -59,7 +61,8 @@ export const useChatStore = create((set, get) => ({
     socket.off('newMessage');
     socket.on('newMessage', (newMessage) => {
       if (newMessage.senderId === selecteduser._id) {
-        set({ message: [...get().message, newMessage] });
+        const updatedMessages = [...get().messages, newMessage];
+        set({ message: updatedMessages, messages: updatedMessages });
       }
     });
   },

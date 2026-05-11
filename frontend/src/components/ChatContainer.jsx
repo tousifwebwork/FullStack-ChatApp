@@ -7,7 +7,7 @@ import MessageSkeleton from './Skeliton/MessageSkeleton';
 
 const ChatContainer = () => {
   const {
-    message,
+    messages,
     getmessages,
     ismessagesloading,
     selecteduser,
@@ -37,7 +37,7 @@ const ChatContainer = () => {
   // Auto-scroll when new messages arrive
   useEffect(() => {
     scrollToBottom();
-  }, [message]);
+  }, [messages]);
 
   // Show skeleton while loading
   if (ismessagesloading) {
@@ -58,7 +58,7 @@ const ChatContainer = () => {
       
       {/* Messages List */}
       <div className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-4">
-        {message.map((msg) => (
+        {messages.map((msg) => (
           <div
             key={msg._id}
             className={`chat ${msg.senderId === authUser._id ? 'chat-end' : 'chat-start'}`}

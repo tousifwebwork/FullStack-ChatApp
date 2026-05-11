@@ -32,6 +32,7 @@ const authRoutes = require("./routes/authRouter.js");
 const messageRoutes = require("./routes/messageRouter.js");
 const scheduleRoutes = require("./routes/scheduleRouter.js");
 const insightRoutes = require("./routes/insights.js");
+const autoMessageRouter = require("./routes/AutoMessageRouter.js");
 
 // ---------------- DB ----------------
 const DB = require("./lib/db.js");
@@ -42,6 +43,7 @@ DB.connectDB();
 
 // ---------------- API Routes ----------------
 app.use("/api/auth", authRoutes);
+app.use("/api/auto-message", autoMessageRouter);
 app.use("/api/messages", messageRoutes);
 app.use("/api/schedule", scheduleRoutes);
 app.use("/api/insights", insightRoutes);
