@@ -14,7 +14,7 @@ const ChatContainer = () => {
     subscribetoMessages,
     unsubscribetoMessages,
   } = useChatStore();
-  const { authUser } = useAuthStore();
+  const { authUser, socket } = useAuthStore();
   const messagesEndRef = useRef(null);
 
   // Scroll to the latest message
@@ -32,7 +32,7 @@ const ChatContainer = () => {
     return () => {
       unsubscribetoMessages();
     };
-  }, [selecteduser._id, getmessages, subscribetoMessages, unsubscribetoMessages]);
+  }, [selecteduser._id, socket, getmessages, subscribetoMessages, unsubscribetoMessages]);
 
   // Auto-scroll when new messages arrive
   useEffect(() => {

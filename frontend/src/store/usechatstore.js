@@ -3,6 +3,9 @@ import toast from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
 import { useAuthStore } from './useAuthStore';
 
+let activeChatMessageHandler = null;
+let allMessagesHandler = null;
+
 export const useChatStore = create((set, get) => ({
   message: [],
   messages: [],
@@ -58,32 +61,44 @@ export const useChatStore = create((set, get) => ({
     const socket = useAuthStore.getState().socket;
     if (!socket) return;
 
-    socket.off('newMessage');
-    socket.on('newMessage', (newMessage) => {
-      if (newMessage.senderId === selecteduser._id) {
+    if (activeChatMessageHandler) {
+      socket.off('newMessage', activeChatMessageHandler);
+    }
+
+    activeChatMessageHandler = (newMessage) => {
+      const senderId = String(newMessage.senderId);
+      if (senderId === String(selecteduser._id)) {
         const updatedMessages = [...get().messages, newMessage];
         set({ message: updatedMessages, messages: updatedMessages });
       }
-    });
+    };
+
+    socket.on('newMessage', activeChatMessageHandler);
   },
 
   subscribetoAllMessages: () => {
     const socket = useAuthStore.getState().socket;
     if (!socket) return;
 
-    socket.off('newMessage');
-    socket.on('newMessage', (newMessage) => {
+    if (allMessagesHandler) {
+      socket.off('newMessage', allMessagesHandler);
+    }
+
+    allMessagesHandler = (newMessage) => {
       const users = get().users.map((u) =>
-        u._id === newMessage.senderId ? { ...u, lastMessageTime: Date.now() } : u
+        String(u._id) === String(newMessage.senderId) ? { ...u, lastMessageTime: Date.now() } : u
       );
       set({ users });
-    });
+    };
+
+    socket.on('newMessage', allMessagesHandler);
   },
 
   unsubscribetoMessages: () => {
     const socket = useAuthStore.getState().socket;
-    if (socket) {
-      socket.off('newMessage');
+    if (socket && activeChatMessageHandler) {
+      socket.off('newMessage', activeChatMessageHandler);
+      activeChatMessageHandler = null;
     }
   },
 

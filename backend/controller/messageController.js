@@ -1,7 +1,8 @@
 const User = require('../models/userModels');
 const Message = require('../models/messageModel');
 const SentimentModel = require('../models/sentimentModel');
-const { getReciverScoketId, io } = require('../lib/socket');
+const { getReciverSoketId, getIO } = require('../lib/socket');
+const io = getIO();
 const  SentimentFunction  = require('../lib/sentiment') ;
 const cloudinary = require('cloudinary').v2;
 
@@ -36,7 +37,7 @@ exports.joinByInviteCode = async (req, res) => {
       $addToSet: { connections: currentUserId },
     });
 
-    const receiverSocketId = getReciverScoketId(userToJoin._id.toString());
+    const receiverSocketId = getReciverSoketId(userToJoin._id.toString());
     if (receiverSocketId) {
       io.to(receiverSocketId).emit('userJoined', {
         userId: currentUserId,
@@ -143,7 +144,7 @@ exports.sendMessage = async (req, res) => {
       }
     }
 
-    const reciverSocketId = getReciverScoketId(receiverId);
+    const reciverSocketId = getReciverSoketId(receiverId);
     if (reciverSocketId) {
       io.to(reciverSocketId).emit('newMessage', newMessage);
     }

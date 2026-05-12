@@ -2,6 +2,7 @@ const { Server } = require("socket.io");
 const jwt = require("jsonwebtoken");
 
 let io;
+const userSocketMap = {};
 
 function initSocket(server) {
   io = new Server(server, {
@@ -30,9 +31,12 @@ function initSocket(server) {
   });
 
   io.on("connection", (socket) => {
-    console.log("🔌 Socket connected:", socket.id, "User:", socket.userId);
+    const userId = socket.userId.toString();
+    userSocketMap[userId] = socket.id;
+    console.log("🔌 Socket connected:", socket.id, "User:", userId);
 
     socket.on("disconnect", () => {
+      delete userSocketMap[userId];
       console.log("❌ Socket disconnected:", socket.id);
     });
   });
@@ -45,4 +49,12 @@ function getIO() {
   return io;
 }
 
-module.exports = { initSocket, getIO };
+function getReciverSoketId(userId) {
+  return userSocketMap[userId.toString()];
+}
+
+function getReciverScoketId(userId) {
+  return getReciverSoketId(userId);
+}
+
+module.exports = { initSocket, getIO, getReciverSoketId, getReciverScoketId };
